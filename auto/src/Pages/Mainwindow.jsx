@@ -1,10 +1,19 @@
 import React, { useState } from "react";
 import Odometer from "./OOD";
 import TripsPage from "./TripsPage";
-import { Tabs, Tab, Box } from "@mui/material";
+import { Tabs, Tab, Box, Snackbar, Alert } from "@mui/material";
 
 function MainWindow() {
   const [tab, setTab] = useState(0);
+  const [trips, setTrips] = useState([]);
+  const [notif, setNotif] = useState({ open: false, message: "" });
+
+  const addTrip = (trip) => {
+    setTrips((prev) => [...prev, trip]);
+    setNotif({ open: true, message: `Trip "${trip.name}" added!` });
+  };
+
+  const handleNotifClose = () => setNotif({ ...notif, open: false });
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -16,11 +25,21 @@ function MainWindow() {
         {tab === 0 && (
           <>
             <h1>This is the Main Window</h1>
-            <Odometer />
+            <Odometer addTrip={addTrip} />
           </>
         )}
-        {tab === 1 && <TripsPage />}
+        {tab === 1 && (
+          <>
+            <h2>Trip Name</h2>
+            <TripsPage trips={trips} />
+          </>
+        )}
       </Box>
+      <Snackbar open={notif.open} autoHideDuration={3000} onClose={handleNotifClose}>
+        <Alert onClose={handleNotifClose} severity="success" sx={{ width: '100%' }}>
+          {notif.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

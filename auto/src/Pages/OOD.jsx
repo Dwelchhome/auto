@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Box, Button, TextField, Typography, Stack, Dialog, DialogTitle, DialogContent } from "@mui/material";
 import Trip from "./Trip"; // Import the Trip component
 
-const Odometer = () => {
+const Odometer = ({ addTrip }) => {
   const [savedValue, setSavedValue] = useState("000000");
   const [editValue, setEditValue] = useState("000000");
   const [tripName, setTripName] = useState("");
@@ -21,6 +21,9 @@ const Odometer = () => {
   const handleSave = () => {
     const sum = Math.min((Number(savedValue) || 0) + (Number(editValue) || 0), 999999);
     setSavedValue(sum.toString().padStart(6, "0"));
+    if (tripName.trim()) {
+      addTrip({ name: tripName.trim(), miles: editValue });
+    }
     setEditValue("000000");
     setTripName("");
   };
@@ -44,6 +47,7 @@ const Odometer = () => {
       </Box>
       <Stack direction="row" alignItems="center" justifyContent="center" spacing={1} sx={{ mt: 3 }}>
         <TextField
+          label="Trip Name"
           type="text"
           value={tripName}
           onChange={(e) => setTripName(e.target.value)}
